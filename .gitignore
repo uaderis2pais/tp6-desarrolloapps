@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build and Transpilation
+dist/
+**/dist/
+build/
+**/build/
+web-build/
+**/web-build/
+
+# Expo & Metro
+.expo/
+**/.expo/
+.expo-shared/
+.metro-health-check*
+*.bundle
+
+# Native builds & caches
+android/
+**/android/
+ios/
+**/ios/
+.gradle/
+**/.gradle/
+local.properties
+*.apk
+*.aab
+
+# Environment & Secrets
+.env
+**/.env
+!.env.example
+!**/.env.example
+.env*.local
+
+# Logs & Debug
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.pem
+
+# Editor / IDE / AI
+.vscode/
+.claude/
+*.tsbuildinfo
