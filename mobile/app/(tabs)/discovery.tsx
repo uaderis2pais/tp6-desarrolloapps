@@ -90,6 +90,35 @@ export default function DiscoveryScreen() {
             </TouchableOpacity>
           </View>
 
+          {/* Presets rápidos de subred */}
+          <View style={{ flexDirection: 'row', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
+            {['192.168.1', '192.168.0', '10.0.0', '172.16.1'].map((sub) => (
+              <TouchableOpacity
+                key={sub}
+                style={{
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                  borderRadius: borderRadius.xs,
+                  backgroundColor: subnetInput === sub ? colors.primaryGlow : colors.surfaceLight,
+                  borderWidth: 1,
+                  borderColor: subnetInput === sub ? colors.primary : colors.border,
+                }}
+                onPress={() => setSubnetInput(sub)}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: '600',
+                    color: subnetInput === sub ? colors.primary : colors.textSecondary,
+                    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                  }}
+                >
+                  {sub}.0/24
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           {/* Barra de Progreso en Vivo */}
           {isScanning && (
             <View style={styles.progressContainer}>
@@ -152,21 +181,32 @@ export default function DiscoveryScreen() {
         ) : (
           filteredDevices.map((device) => {
             const isSelected = store.selectedDevice?.id === device.id;
+            const vendorColor =
+              device.vendor === 'Huawei'
+                ? colors.vendorHuawei
+                : device.vendor === 'MikroTik'
+                ? colors.vendorMikrotik
+                : device.vendor === 'Cisco'
+                ? colors.vendorCisco
+                : device.vendor === 'ZTE'
+                ? colors.vendorZte
+                : colors.primary;
+
             return (
               <View
                 key={device.id}
                 style={[styles.deviceCard, isSelected && styles.deviceCardSelected]}
               >
                 <View style={styles.cardHeader}>
-                  <View style={styles.cardVendorBadge}>
-                    <Text style={styles.cardVendorText}>{device.vendor}</Text>
+                  <View style={[styles.cardVendorBadge, { borderColor: vendorColor + '60', backgroundColor: vendorColor + '15' }]}>
+                    <Text style={[styles.cardVendorText, { color: vendorColor }]}>{device.vendor}</Text>
                   </View>
                   <View style={styles.cardTypeBadge}>
                     <Text style={styles.cardTypeText}>{device.type}</Text>
                   </View>
                   <View style={styles.onlineBadge}>
                     <View style={styles.onlineDot} />
-                    <Text style={styles.onlineText}>ONLINE</Text>
+                    <Text style={styles.onlineText}>ONLINE {device.latencyMs ? `• ${device.latencyMs}ms` : ''}</Text>
                   </View>
                 </View>
 

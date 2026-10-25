@@ -26,6 +26,26 @@ export const colors = {
   arpColor: '#F59E0B',
   outboxColor: '#EC4899',
 
+  // Vendor Branding Colors
+  vendorHuawei: '#E53E3E',
+  vendorMikrotik: '#8B5CF6',
+  vendorCisco: '#06B6D4',
+  vendorZte: '#F59E0B',
+  vendorFiberhome: '#3B82F6',
+  vendorLinux: '#10B981',
+
+  // Optical Signal Status
+  opticalOptimal: '#10B981',
+  opticalWarning: '#F59E0B',
+  opticalCritical: '#EF4444',
+
+  // Terminal CRT theme
+  terminalBg: '#080C14',
+  terminalHeader: '#101726',
+  terminalText: '#22C55E',
+  terminalPrompt: '#38BDF8',
+  terminalCursor: '#06B6D4',
+
   text: '#F8FAFC',
   textSecondary: '#94A3B8',
   textMuted: '#64748B',

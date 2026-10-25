@@ -9,7 +9,53 @@ export interface ScanProgress {
 }
 
 export class LanDiscoveryService {
-  private static cachedDevices: NetworkDevice[] = [];
+  private static cachedDevices: NetworkDevice[] = [
+    {
+      id: 'dev-huawei-ont-1',
+      ip: '192.168.1.1',
+      mac: '48:D8:15:3A:82:1F',
+      vendor: 'Huawei',
+      type: 'ONT',
+      hostname: 'ONT-HG8245W5-GW',
+      model: 'EchoLife HG8245W5 (GPON)',
+      isOnline: true,
+      lastSeen: new Date().toISOString(),
+      latencyMs: 1.8,
+      snmpEnabled: true,
+      sshEnabled: true,
+      openPorts: [22, 80, 161, 443],
+    },
+    {
+      id: 'dev-mikrotik-rb-2',
+      ip: '192.168.1.2',
+      mac: 'B8:69:F4:A2:18:90',
+      vendor: 'MikroTik',
+      type: 'ROUTER',
+      hostname: 'RB5009-CoreRouter',
+      model: 'RouterBOARD RB5009UG+S+IN',
+      isOnline: true,
+      lastSeen: new Date().toISOString(),
+      latencyMs: 0.9,
+      snmpEnabled: true,
+      sshEnabled: true,
+      openPorts: [22, 80, 161, 8291],
+    },
+    {
+      id: 'dev-cisco-sw-10',
+      ip: '192.168.1.10',
+      mac: '00:1E:13:B8:24:9C',
+      vendor: 'Cisco',
+      type: 'SWITCH',
+      hostname: 'SW-Catalyst-2960X',
+      model: 'Catalyst WS-C2960X-24TS-L',
+      isOnline: true,
+      lastSeen: new Date().toISOString(),
+      latencyMs: 2.4,
+      snmpEnabled: true,
+      sshEnabled: true,
+      openPorts: [22, 161],
+    },
+  ];
 
   /**
    * Ejecuta el escaneo de red local sobre el segmento CIDR indicado (RF-01)

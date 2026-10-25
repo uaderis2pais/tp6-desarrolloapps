@@ -24,6 +24,46 @@ export default function OutboxScreen() {
   const isOffline = store.simulatedOffline || !store.isOnline;
   const { pending, syncing, synced, failed } = store.outboxStats;
 
+  const [nocStatus, setNocStatus] = useState<{ checked: boolean; ok: boolean; latencyMs?: number; message: string }>({
+    checked: false,
+    ok: false,
+    message: '',
+  });
+  const [isTestingNoc, setIsTestingNoc] = useState(false);
+
+  const testNocConnection = async () => {
+    setIsTestingNoc(true);
+    const start = performance.now();
+    try {
+      const cleanUrl = backendUrl.replace(/\/+$/, '');
+      const resp = await fetch(`${cleanUrl}/health`, { signal: AbortSignal.timeout(3500) });
+      const elapsed = Math.round(performance.now() - start);
+      if (resp.ok) {
+        const json = await resp.json();
+        setNocStatus({
+          checked: true,
+          ok: true,
+          latencyMs: elapsed,
+          message: `NOC Online (${elapsed}ms) • Servidor v${json.version || '1.0.0'}`,
+        });
+      } else {
+        setNocStatus({
+          checked: true,
+          ok: false,
+          message: `Error HTTP ${resp.status} al consultar /health`,
+        });
+      }
+    } catch (e: any) {
+      setNocStatus({
+        checked: true,
+        ok: false,
+        message: `Inaccesible en ${backendUrl} (Verificar backend)`,
+      });
+    } finally {
+      setIsTestingNoc(false);
+    }
+  };
+
   const handleFlush = async () => {
     store.updateConfig({ backendSyncUrl: backendUrl });
     await store.flushOutbox();
@@ -49,7 +89,7 @@ export default function OutboxScreen() {
         {/* Panel de Configuración de Endpoint si está abierto */}
         {showConfig && (
           <View style={styles.configBox}>
-            <Text style={styles.configLabel}>URL del Backend de Sincronización:</Text>
+            <Text style={styles.configLabel}>URL del Backend de Sincronización (NOC):</Text>
             <View style={styles.configRow}>
               <TextInput
                 style={styles.configInput}
@@ -61,11 +101,52 @@ export default function OutboxScreen() {
               />
               <TouchableOpacity
                 style={styles.configSaveBtn}
-                onPress={() => store.updateConfig({ backendSyncUrl: backendUrl })}
+                onPress={() => {
+                  store.updateConfig({ backendSyncUrl: backendUrl });
+                  testNocConnection();
+                }}
               >
-                <Text style={styles.configSaveText}>Guardar</Text>
+                <Text style={styles.configSaveText}>Probar</Text>
               </TouchableOpacity>
             </View>
+
+            {isTestingNoc && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 6 }}>
+                <ActivityIndicator size="small" color={colors.primary} />
+                <Text style={{ fontSize: 11, color: colors.textSecondary }}>Sondeando endpoint /health...</Text>
+              </View>
+            )}
+
+            {nocStatus.checked && !isTestingNoc && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 8,
+                  padding: 8,
+                  borderRadius: borderRadius.sm,
+                  backgroundColor: nocStatus.ok ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  borderWidth: 1,
+                  borderColor: nocStatus.ok ? colors.accentGreen : colors.accentRed,
+                  gap: 6,
+                }}
+              >
+                <Ionicons
+                  name={nocStatus.ok ? 'checkmark-circle' : 'alert-circle'}
+                  size={16}
+                  color={nocStatus.ok ? colors.accentGreen : colors.accentRed}
+                />
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '600',
+                    color: nocStatus.ok ? colors.accentGreen : colors.accentRed,
+                  }}
+                >
+                  {nocStatus.message}
+                </Text>
+              </View>
+            )}
           </View>
         )}
 

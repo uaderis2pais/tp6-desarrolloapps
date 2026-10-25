@@ -361,6 +361,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: 'center',
+    ...Platform.select({
+      web: {
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+      },
+      default: {
+        elevation: 2,
+      },
+    }),
   },
   statValue: {
     fontSize: 18,

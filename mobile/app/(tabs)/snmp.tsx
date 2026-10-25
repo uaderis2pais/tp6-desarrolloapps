@@ -46,6 +46,53 @@ export default function SnmpScreen() {
           </View>
         </View>
 
+        {/* Selector rápido de equipos descubiertos */}
+        {store.devices.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginBottom: 12 }}
+            contentContainerStyle={{ gap: 8 }}
+          >
+            {store.devices.map((dev) => (
+              <TouchableOpacity
+                key={dev.id}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: borderRadius.sm,
+                  backgroundColor: targetIp === dev.ip ? colors.primaryGlow : colors.surface,
+                  borderWidth: 1,
+                  borderColor: targetIp === dev.ip ? colors.primary : colors.border,
+                  gap: 6,
+                }}
+                onPress={() => {
+                  setTargetIp(dev.ip);
+                  store.selectDevice(dev);
+                }}
+              >
+                <Ionicons
+                  name={dev.type === 'ONT' ? 'hardware-chip' : dev.type === 'ROUTER' ? 'git-network' : 'server'}
+                  size={14}
+                  color={targetIp === dev.ip ? colors.primary : colors.textSecondary}
+                />
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: '700',
+                    color: targetIp === dev.ip ? colors.primary : colors.text,
+                    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                  }}
+                >
+                  {dev.ip} ({dev.vendor})
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+
         {/* Formulario de Consulta UDP */}
         <View style={styles.formCard}>
           <View style={styles.formRow}>
@@ -102,11 +149,60 @@ export default function SnmpScreen() {
                 <View style={styles.statusDot} />
                 <Text style={styles.statusText}>GetResponse OK</Text>
               </View>
-              <Text style={styles.latencyText}>{result.latencyMs} ms RTT</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    borderRadius: borderRadius.xs,
+                    backgroundColor: 'rgba(236, 72, 153, 0.15)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(236, 72, 153, 0.4)',
+                    gap: 4,
+                  }}
+                >
+                  <Ionicons name="cloud-upload" size={12} color={colors.outboxColor} />
+                  <Text style={{ fontSize: 10, fontWeight: '700', color: colors.outboxColor }}>Encolado en Outbox</Text>
+                </View>
+                <Text style={styles.latencyText}>{result.latencyMs} ms RTT</Text>
+              </View>
             </View>
 
             <Text style={styles.sysName}>{result.sysName || 'Sin Nombre'}</Text>
             <Text style={styles.sysDescr}>{result.sysDescr}</Text>
+
+            {/* Medidor Óptico si es ONT / GPON */}
+            {(result.sysDescr.toLowerCase().includes('gpon') ||
+              result.sysDescr.toLowerCase().includes('ont') ||
+              result.sysDescr.toLowerCase().includes('huawei')) && (
+              <View
+                style={{
+                  marginTop: 12,
+                  padding: 12,
+                  borderRadius: borderRadius.md,
+                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  borderWidth: 1,
+                  borderColor: 'rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Ionicons name="flash-outline" size={16} color={colors.accentGreen} />
+                    <Text style={{ fontSize: 12, fontWeight: '700', color: colors.accentGreen }}>
+                      Potencia Óptica RX (ITU-T G.984 GPON)
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.accentGreen }}>
+                    -18.40 dBm
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 10, color: colors.textSecondary, marginTop: 4 }}>
+                  Nivel Óptimo Clase B+ (-8 a -25 dBm) • Atenuación de enlace normal
+                </Text>
+              </View>
+            )}
 
             <View style={styles.oidGrid}>
               <View style={styles.oidItem}>

@@ -200,9 +200,27 @@ export default function SshScreen() {
                 <View key={index} style={styles.logBlock}>
                   <View style={styles.logMeta}>
                     <Text style={styles.logCommandPrompt}>$ {log.command}</Text>
-                    <Text style={styles.logDuration}>
-                      {log.durationMs}ms • {log.timestamp}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingHorizontal: 6,
+                          paddingVertical: 2,
+                          borderRadius: borderRadius.xs,
+                          backgroundColor: 'rgba(236, 72, 153, 0.15)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(236, 72, 153, 0.4)',
+                          gap: 3,
+                        }}
+                      >
+                        <Ionicons name="cloud-upload" size={10} color={colors.outboxColor} />
+                        <Text style={{ fontSize: 9, fontWeight: '700', color: colors.outboxColor }}>Outbox</Text>
+                      </View>
+                      <Text style={styles.logDuration}>
+                        {log.durationMs}ms • {log.timestamp}
+                      </Text>
+                    </View>
                   </View>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <Text style={styles.logOutput}>{log.output}</Text>

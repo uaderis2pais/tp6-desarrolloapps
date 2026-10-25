@@ -15,6 +15,8 @@ export interface NetworkDevice {
   sshEnabled: boolean;
   model?: string;
   serialNumber?: string;
+  latencyMs?: number;
+  openPorts?: number[];
 }
 
 export interface SnmpInterfaceStats {
