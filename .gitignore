@@ -50,3 +50,6 @@ Thumbs.db
 .vscode/
 .claude/
 *.tsbuildinfo
+
+# Local presentation notes
+DEFENSA.md
